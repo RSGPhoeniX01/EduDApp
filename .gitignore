@@ -1,0 +1,38 @@
+# Node.js dependencies
+
+node_modules/
+client/node_modules/
+contracts/node_modules/
+
+# Hardhat (Smart Contract)
+
+contract/artifacts/
+contract/cache/
+coverage/
+coverage.json
+typechain-types/
+
+# React (Frontend)
+
+client/build/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE / Editor
+
+.idea
+.vscode/
+*.swp
+*.swo

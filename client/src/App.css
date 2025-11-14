@@ -1,0 +1,8 @@
+/* We'll use Chakra for most styling, but a global
+  background provides a nice touch.
+*/
+body {
+  /* A dark, professional gradient for our dark theme */
+  background-image: linear-gradient(120deg, #2c3e50 0%, #4a5568 100%);
+  min-height: 100vh;
+}
