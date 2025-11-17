@@ -25,7 +25,6 @@ const ViewTeachers = () => {
       try {
         setIsLoading(true);
         const data = await contract.getApprovedTeachers();
-        // FIX: Manually map struct properties to plain objects
         const formattedData = data.map(teacher => ({
           walletAddress: teacher.walletAddress,
           name: teacher.name,

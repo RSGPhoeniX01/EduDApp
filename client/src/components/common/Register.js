@@ -16,7 +16,7 @@ import { useBlockchain } from '../../context/Blockchain.context';
 const Register = () => {
   const { contract, roleEnum } = useBlockchain();
   const [name, setName] = useState('');
-  const [role, setRole] = useState(roleEnum[2]); // Default to Teacher
+  const [role, setRole] = useState(roleEnum[2]); 
   const [subject, setSubject] = useState('');
   const [subjects, setSubjects] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,6 @@ const Register = () => {
         duration: 5000,
         isClosable: true,
       });
-      // This will trigger a reload of the page/context
       window.location.reload(); 
     } catch (error) {
       console.error('Registration failed:', error);

@@ -27,9 +27,7 @@ const ApproveUsers = () => {
     try {
       setIsLoading(true);
       const users = await contract.getPendingUsers();
-      // Convert BigInt to Number for role
       const formattedUsers = users.map(user => ({
-        // FIX: Manually map struct properties
         walletAddress: user.walletAddress,
         name: user.name,
         role: roleEnum[Number(user.role)]

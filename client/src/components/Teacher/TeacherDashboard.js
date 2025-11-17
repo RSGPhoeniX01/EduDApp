@@ -23,11 +23,11 @@ import { useBlockchain } from '../../context/Blockchain.context';
 const TeacherDashboard = () => {
   const { contract, userName } = useBlockchain();
   const [students, setStudents] = useState([]);
-  const [marks, setMarks] = useState({}); // { studentAddress: mark }
+  const [marks, setMarks] = useState({});
   const [subject, setSubject] = useState('');
   const [resultsPublished, setResultsPublished] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [saveLoading, setSaveLoading] = useState({}); // { studentAddress: boolean }
+  const [saveLoading, setSaveLoading] = useState({}); 
   const toast = useToast();
 
   const fetchMyStudents = useCallback(async () => {
@@ -42,11 +42,11 @@ const TeacherDashboard = () => {
       setResultsPublished(published);
 
       const formattedStudents = studentData.map((student, index) => {
-        // FIX: Manually map struct properties
+
         return {
           walletAddress: student.walletAddress,
           name: student.name,
-          subjects: student.subjects, // Not strictly needed here but good practice
+          subjects: student.subjects,
           initialMark: Number(markData[index]),
         };
       });
@@ -102,7 +102,7 @@ const TeacherDashboard = () => {
         status: 'success',
         duration: 3000,
       });
-      // Refetch data to confirm the save and update initialMark
+      
       fetchMyStudents();
     } catch (error) {
       console.error('Failed to update mark:', error);

@@ -1,25 +1,23 @@
 import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { ethers } from 'ethers';
 
-// --- IMPORTANT ---
 // 1. Paste your contract's deployed address
-const contractAddress = "YOUR_CONTRACT_ADDRESS_HERE"; 
+const contractAddress = "your_contract_address_here"; 
 
 // 2. Paste your contract's ABI
-const contractABI = [ /* YOUR_CONTRACT_ABI_HERE */ ];
-// --- IMPORTANT ---
+const contractABI = [/* ABI content here */];
 
 export const BlockchainContext = createContext();
 
 export const BlockchainProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [contract, setContract] = useState(null);
-  const [userRole, setUserRole] = useState(null); // 'NONE', 'ADMIN', 'TEACHER', 'STUDENT'
-  const [userStatus, setUserStatus] = useState(null); // 'PENDING', 'APPROVED'
+  const [userRole, setUserRole] = useState(null); 
+  const [userStatus, setUserStatus] = useState(null); 
   const [userName, setUserName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Enum mappings from Solidity
+  
   const roleEnum = { 0: 'NONE', 1: 'ADMIN', 2: 'TEACHER', 3: 'STUDENT' };
   const statusEnum = { 0: 'PENDING', 1: 'APPROVED' };
 
@@ -40,7 +38,6 @@ export const BlockchainProvider = ({ children }) => {
     }
   };
 
-  // --- FIX 1: Wrap loadBlockchainData in useCallback ---
   const loadBlockchainData = useCallback(async (account) => {
     try {
       setIsLoading(true);
@@ -50,7 +47,6 @@ export const BlockchainProvider = ({ children }) => {
       
       setContract(educationContract);
 
-      // Fetch the user's role and status
       const [name, role, status] = await educationContract.getMyRole();
       
       setUserName(name);
@@ -59,13 +55,13 @@ export const BlockchainProvider = ({ children }) => {
 
     } catch (error)
     {
-      // If getMyRole fails, it's likely an unregistered user or network issue
+      
       console.log("Could not fetch role, user likely unregistered.");
-      setUserRole('NONE'); // Default to 'NONE' if role call fails
+      setUserRole('NONE'); 
     } finally {
       setIsLoading(false);
     }
-  }, []); // Empty dependency array as it has no external dependencies
+  }, []); 
 
   useEffect(() => {
     const checkWalletConnection = async () => {
@@ -77,20 +73,19 @@ export const BlockchainProvider = ({ children }) => {
             setCurrentAccount(account);
             await loadBlockchainData(account);
           } else {
-            setIsLoading(false); // No account connected
+            setIsLoading(false); 
           }
         } catch (error) {
           console.error("Error checking wallet connection:", error);
           setIsLoading(false);
         }
       } else {
-        setIsLoading(false); // No MetaMask
+        setIsLoading(false); 
       }
     };
     
     checkWalletConnection();
 
-    // Listen for account changes
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) {
@@ -104,7 +99,6 @@ export const BlockchainProvider = ({ children }) => {
       });
     }
 
-    // --- FIX 2: Add loadBlockchainData to dependency array ---
   }, [loadBlockchainData]);
 
   return (
@@ -117,7 +111,7 @@ export const BlockchainProvider = ({ children }) => {
         userStatus,
         userName,
         isLoading,
-        roleEnum, // Pass enums for use in forms
+        roleEnum, 
         statusEnum
       }}
     >
@@ -126,5 +120,4 @@ export const BlockchainProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the context
 export const useBlockchain = () => useContext(BlockchainContext);

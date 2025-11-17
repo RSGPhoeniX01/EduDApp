@@ -4,21 +4,20 @@ import { useBlockchain } from '../../context/Blockchain.context';
 import { FaWallet } from 'react-icons/fa';
 
 const Navigation = () => {
-  const { currentAccount, connectWallet, name, role } = useBlockchain(); // <-- FIX: Use 'name' and 'role'
+  const { currentAccount, connectWallet, userName, userRole } = useBlockchain();
+  console.log("role",userRole);
 
-  // Function to truncate wallet address
   const truncateAddress = (address) => {
     if (!address) return "";
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
-  // --- ADD THIS HELPER ---
-  const getRoleName = (role) => {
-    switch (role) {
-      case 1: return 'ADMIN';
-      case 2: return 'TEACHER';
-      case 3: return 'STUDENT';
-      case 99: return 'PENDING';
+  const getRoleName = (userRole) => {
+    switch (userRole) {
+      case 'ADMIN': return 'ADMIN';
+      case 'TEACHER': return 'TEACHER';
+      case 'STUDENT': return 'STUDENT';
+      case 'PENDING': return 'PENDING';
       default: return '...';
     }
   };
@@ -44,7 +43,8 @@ const Navigation = () => {
         {currentAccount ? (
           <Flex align="center">
             <Text mr={4} fontWeight="bold">
-              {name} ({getRoleName(role)}) {/* <-- FIX: Use helper */}
+              {userName} ({getRoleName(userRole)}) 
+              
             </Text>
             <Button
               bg="whiteAlpha.300"
