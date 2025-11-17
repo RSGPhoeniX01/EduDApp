@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -14,8 +14,8 @@ import {
   Alert,
   AlertIcon,
   VStack,
-} from '@chakra-ui/react';
-import { useBlockchain } from '../../context/Blockchain.context';
+} from "@chakra-ui/react";
+import { useBlockchain } from "../../context/Blockchain.context";
 
 const StudentDashboard = () => {
   const { contract, userName } = useBlockchain();
@@ -35,17 +35,18 @@ const StudentDashboard = () => {
     return "F";
   };
 
-  const gradeToPoint = (grade) => {
-    switch (grade) {
-      case "A+": return 10;
-      case "A": return 9;
-      case "B+": return 8;
-      case "B": return 7;
-      case "C": return 6;
-      case "D": return 5;
-      default: return 4;  // F
+  const cpiCalculator = (data) => {
+    const len = data.length;
+    let totMarksObtained = 0;
+    let totMarks = len * 100; 
+    for (let i = 0; i < len; i++) {
+      totMarksObtained += Number(data[i].mark);
     }
+    const calculatedCpi = (totMarksObtained / totMarks) * 10;
+    console.log("cpi:", calculatedCpi);
+    return parseFloat(calculatedCpi.toFixed(2));
   };
+  
 
   useEffect(() => {
     const fetchMyMarks = async () => {
@@ -53,7 +54,8 @@ const StudentDashboard = () => {
       try {
         setIsLoading(true);
 
-        const [subjects, marks, resultsPublished_bool] = await contract.getMyMarks();
+        const [subjects, marks, resultsPublished_bool] =
+          await contract.getMyMarks();
         setIsPublished(resultsPublished_bool);
 
         const formattedData = subjects.map((subject, index) => {
@@ -69,16 +71,13 @@ const StudentDashboard = () => {
           let backSubs = [];
 
           formattedData.forEach((item) => {
-            totalPoints += gradeToPoint(item.grade);
             if (item.grade === "F") backSubs.push(item.subject);
           });
-
           setBacks(backSubs);
-          setCpi((totalPoints / formattedData.length).toFixed(2));
+          setCpi(cpiCalculator(formattedData));
         }
-
       } catch (error) {
-        console.error('Failed to fetch marks:', error);
+        console.error("Failed to fetch marks:", error);
       } finally {
         setIsLoading(false);
       }
@@ -87,7 +86,11 @@ const StudentDashboard = () => {
   }, [contract]);
 
   if (isLoading) {
-    return <Center p={10}><Spinner size="xl" /></Center>;
+    return (
+      <Center p={10}>
+        <Spinner size="xl" />
+      </Center>
+    );
   }
 
   return (
@@ -152,10 +155,20 @@ const StudentDashboard = () => {
                 <AlertIcon />
                 Back in: {backs.join(", ")}
               </Alert>
-            ) : (
+            ) : cpi >= 8 ? (
               <Alert status="success" borderRadius="md">
                 <AlertIcon />
-                Congratulations! You have passed all subjects.
+                Excellent! You passed with <strong>First Division</strong>.
+              </Alert>
+            ) : cpi >= 6 ? (
+              <Alert status="warning" borderRadius="md">
+                <AlertIcon />
+                Good job! You passed with Second Division.
+              </Alert>
+            ) : (
+              <Alert status="error" borderRadius="md">
+                <AlertIcon />
+                ⚠️ Needs Improvement. Please work harder next time.
               </Alert>
             )}
           </>

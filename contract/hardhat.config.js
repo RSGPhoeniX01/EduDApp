@@ -9,7 +9,7 @@ module.exports = {
       url: "http://127.0.0.1:8545", 
       accounts: [
         // Add the private key of youraccount for admin before running deployment scripts
-        "your_private_key_here"
+        "0x910a2e4157286dfbb92de5232bfb36311dffb34ee2a633f882c18e1c7c1eaf4a"
       ]
     }
   }

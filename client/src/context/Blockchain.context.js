@@ -2,10 +2,608 @@ import React, { createContext, useState, useEffect, useContext, useCallback } fr
 import { ethers } from 'ethers';
 
 // 1. Paste your contract's deployed address
-const contractAddress = "your_contract_address_here"; 
+const contractAddress = "0x3fDA7d86F12B9C0633140Db13a7771f8BFd3e914"; 
 
 // 2. Paste your contract's ABI
-const contractABI = [/* ABI content here */];
+const contractABI = [{
+  "inputs": [],
+  "stateMutability": "nonpayable",
+  "type": "constructor"
+},
+{
+  "anonymous": false,
+  "inputs": [
+    {
+      "indexed": false,
+      "internalType": "address",
+      "name": "teacher",
+      "type": "address"
+    },
+    {
+      "indexed": false,
+      "internalType": "address",
+      "name": "student",
+      "type": "address"
+    },
+    {
+      "indexed": false,
+      "internalType": "string",
+      "name": "subject",
+      "type": "string"
+    },
+    {
+      "indexed": false,
+      "internalType": "uint256",
+      "name": "mark",
+      "type": "uint256"
+    }
+  ],
+  "name": "MarkAdded",
+  "type": "event"
+},
+{
+  "anonymous": false,
+  "inputs": [
+    {
+      "indexed": false,
+      "internalType": "address",
+      "name": "admin",
+      "type": "address"
+    }
+  ],
+  "name": "ResultsPublished",
+  "type": "event"
+},
+{
+  "anonymous": false,
+  "inputs": [
+    {
+      "indexed": false,
+      "internalType": "address",
+      "name": "user",
+      "type": "address"
+    },
+    {
+      "indexed": false,
+      "internalType": "enum Education.Role",
+      "name": "role",
+      "type": "uint8"
+    }
+  ],
+  "name": "UserApproved",
+  "type": "event"
+},
+{
+  "anonymous": false,
+  "inputs": [
+    {
+      "indexed": false,
+      "internalType": "address",
+      "name": "user",
+      "type": "address"
+    },
+    {
+      "indexed": false,
+      "internalType": "string",
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "indexed": false,
+      "internalType": "enum Education.Role",
+      "name": "role",
+      "type": "uint8"
+    }
+  ],
+  "name": "UserCreated",
+  "type": "event"
+},
+{
+  "anonymous": false,
+  "inputs": [
+    {
+      "indexed": false,
+      "internalType": "address",
+      "name": "user",
+      "type": "address"
+    },
+    {
+      "indexed": false,
+      "internalType": "string",
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "indexed": false,
+      "internalType": "enum Education.Role",
+      "name": "role",
+      "type": "uint8"
+    }
+  ],
+  "name": "UserRegistered",
+  "type": "event"
+},
+{
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "_studentAddress",
+      "type": "address"
+    },
+    {
+      "internalType": "string",
+      "name": "_subject",
+      "type": "string"
+    },
+    {
+      "internalType": "uint256",
+      "name": "_mark",
+      "type": "uint256"
+    }
+  ],
+  "name": "addMark",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "admin",
+  "outputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "_userAddress",
+      "type": "address"
+    }
+  ],
+  "name": "approveUser",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
+    }
+  ],
+  "name": "approvedStudents",
+  "outputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
+    }
+  ],
+  "name": "approvedTeachers",
+  "outputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "_userAddress",
+      "type": "address"
+    },
+    {
+      "internalType": "string",
+      "name": "_name",
+      "type": "string"
+    },
+    {
+      "internalType": "enum Education.Role",
+      "name": "_role",
+      "type": "uint8"
+    },
+    {
+      "internalType": "string",
+      "name": "_subject",
+      "type": "string"
+    },
+    {
+      "internalType": "string[]",
+      "name": "_subjects",
+      "type": "string[]"
+    }
+  ],
+  "name": "createUser",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "getApprovedStudents",
+  "outputs": [
+    {
+      "components": [
+        {
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "enum Education.Role",
+          "name": "role",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum Education.Status",
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "internalType": "string[]",
+          "name": "subjects",
+          "type": "string[]"
+        }
+      ],
+      "internalType": "struct Education.User[]",
+      "name": "",
+      "type": "tuple[]"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "getApprovedTeachers",
+  "outputs": [
+    {
+      "components": [
+        {
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "enum Education.Role",
+          "name": "role",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum Education.Status",
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "internalType": "string[]",
+          "name": "subjects",
+          "type": "string[]"
+        }
+      ],
+      "internalType": "struct Education.User[]",
+      "name": "",
+      "type": "tuple[]"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "getMyMarks",
+  "outputs": [
+    {
+      "internalType": "string[]",
+      "name": "",
+      "type": "string[]"
+    },
+    {
+      "internalType": "uint256[]",
+      "name": "",
+      "type": "uint256[]"
+    },
+    {
+      "internalType": "bool",
+      "name": "",
+      "type": "bool"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "getMyRole",
+  "outputs": [
+    {
+      "internalType": "string",
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "internalType": "enum Education.Role",
+      "name": "role",
+      "type": "uint8"
+    },
+    {
+      "internalType": "enum Education.Status",
+      "name": "status",
+      "type": "uint8"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "getMyStudents",
+  "outputs": [
+    {
+      "components": [
+        {
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "enum Education.Role",
+          "name": "role",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum Education.Status",
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "internalType": "string[]",
+          "name": "subjects",
+          "type": "string[]"
+        }
+      ],
+      "internalType": "struct Education.User[]",
+      "name": "",
+      "type": "tuple[]"
+    },
+    {
+      "internalType": "uint256[]",
+      "name": "",
+      "type": "uint256[]"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "getPendingUsers",
+  "outputs": [
+    {
+      "components": [
+        {
+          "internalType": "address",
+          "name": "walletAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "enum Education.Role",
+          "name": "role",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum Education.Status",
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "internalType": "string[]",
+          "name": "subjects",
+          "type": "string[]"
+        }
+      ],
+      "internalType": "struct Education.User[]",
+      "name": "",
+      "type": "tuple[]"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    },
+    {
+      "internalType": "string",
+      "name": "",
+      "type": "string"
+    }
+  ],
+  "name": "marks",
+  "outputs": [
+    {
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "uint256",
+      "name": "",
+      "type": "uint256"
+    }
+  ],
+  "name": "pendingUsers",
+  "outputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "publishResults",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "string",
+      "name": "_name",
+      "type": "string"
+    },
+    {
+      "internalType": "enum Education.Role",
+      "name": "_role",
+      "type": "uint8"
+    },
+    {
+      "internalType": "string",
+      "name": "_subject",
+      "type": "string"
+    },
+    {
+      "internalType": "string[]",
+      "name": "_subjects",
+      "type": "string[]"
+    }
+  ],
+  "name": "register",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+},
+{
+  "inputs": [],
+  "name": "resultsPublished",
+  "outputs": [
+    {
+      "internalType": "bool",
+      "name": "",
+      "type": "bool"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
+{
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "",
+      "type": "address"
+    }
+  ],
+  "name": "users",
+  "outputs": [
+    {
+      "internalType": "address",
+      "name": "walletAddress",
+      "type": "address"
+    },
+    {
+      "internalType": "string",
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "internalType": "enum Education.Role",
+      "name": "role",
+      "type": "uint8"
+    },
+    {
+      "internalType": "enum Education.Status",
+      "name": "status",
+      "type": "uint8"
+    },
+    {
+      "internalType": "string",
+      "name": "subject",
+      "type": "string"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+}];
 
 export const BlockchainContext = createContext();
 
