@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+
 pragma solidity 0.8.30;
 
 import "hardhat/console.sol";
@@ -6,28 +6,24 @@ import "hardhat/console.sol";
 contract Education {
     address public admin;
 
-    // Define enums for clarity
     enum Role { NONE, ADMIN, TEACHER, STUDENT }
     enum Status { PENDING, APPROVED }
 
     struct User {
         address walletAddress;
-        string name; // User's name
+        string name; 
         Role role;
         Status status;
-        string subject; // For Teacher (only one)
-        string[] subjects; // For Student (multiple)
+        string subject; 
+        string[] subjects;
     }
 
-    // Mapping to store all users by their wallet address
     mapping(address => User) public users;
 
-    // Arrays to help the admin manage users
     address[] public pendingUsers;
     address[] public approvedTeachers;
     address[] public approvedStudents;
 
-    // Mapping to store marks: studentAddress => subjectName => mark
     mapping(address => mapping(string => uint)) public marks;
 
     bool public resultsPublished;
@@ -57,7 +53,6 @@ contract Education {
 
     constructor() {
         admin = msg.sender;
-        // The deployer is automatically the admin
         users[admin] = User({
             walletAddress: admin,
             name: "Admin",
@@ -69,19 +64,11 @@ contract Education {
         emit UserCreated(admin, "Admin", Role.ADMIN);
     }
 
-    /**
-     * @dev Get the role and status of the connected user.
-     * This is the main function the frontend will call on load.
-     */
     function getMyRole() public view returns (string memory name, Role role, Status status) {
         User storage user = users[msg.sender];
         return (user.name, user.role, user.status);
     }
 
-    /**
-     * @dev Register a new Teacher or Student.
-     * Users start as PENDING.
-     */
     function register(string memory _name, Role _role, string memory _subject, string[] memory _subjects) public {
         require(users[msg.sender].role == Role.NONE, "User already registered");
         require(_role == Role.TEACHER || _role == Role.STUDENT, "Can only register as Teacher or Student");
@@ -102,9 +89,6 @@ contract Education {
         emit UserRegistered(msg.sender, _name, _role);
     }
 
-    /**
-     * @dev Admin: Approve a pending user.
-     */
     function approveUser(address _userAddress) public onlyAdmin {
         User storage user = users[_userAddress];
         require(user.status == Status.PENDING, "User is not pending");
@@ -124,9 +108,7 @@ contract Education {
         emit UserApproved(_userAddress, user.role);
     }
 
-    /**
-     * @dev Admin: Directly create a new, pre-approved user.
-     */
+  
     function createUser(address _userAddress, string memory _name, Role _role, string memory _subject, string[] memory _subjects) public onlyAdmin {
         require(users[_userAddress].role == Role.NONE, "User already exists");
         require(_role == Role.TEACHER || _role == Role.STUDENT, "Can only create Teacher or Student");
@@ -148,9 +130,6 @@ contract Education {
         emit UserCreated(_userAddress, _name, _role);
     }
 
-    /**
-     * @dev Teacher: Add or update a mark for a student.
-     */
     function addMark(address _studentAddress, string memory _subject, uint _mark) public onlyTeacher resultsNotPublished {
         // Check if the teacher is assigned to this subject
         require(keccak256(abi.encodePacked(users[msg.sender].subject)) == keccak256(abi.encodePacked(_subject)), "Teacher not assigned to this subject");
@@ -170,15 +149,12 @@ contract Education {
         emit MarkAdded(msg.sender, _studentAddress, _subject, _mark);
     }
 
-    /**
-     * @dev Admin: Publish all results. This locks marks.
-     */
+ 
     function publishResults() public onlyAdmin {
         resultsPublished = true;
         emit ResultsPublished(msg.sender);
     }
 
-    // --- Helper Functions (Getters for Frontend) ---
 
     function getPendingUsers() public view onlyAdmin returns (User[] memory) {
         User[] memory pendingList = new User[](pendingUsers.length);
@@ -204,13 +180,9 @@ contract Education {
         return studentList;
     }
 
-    /**
-     * @dev Teacher: Get all students enrolled in my subject.
-     */
     function getMyStudents() public view onlyTeacher returns (User[] memory, uint[] memory) {
         string memory mySubject = users[msg.sender].subject;
         
-        // We need to count them first
         uint studentCount = 0;
         for(uint i = 0; i < approvedStudents.length; i++) {
             address studentAddress = approvedStudents[i];
@@ -241,9 +213,6 @@ contract Education {
         return (studentList, studentMarks);
     }
 
-    /**
-     * @dev Student: Get my marks.
-     */
     function getMyMarks() public view returns (string[] memory, uint[] memory, bool) {
         require(users[msg.sender].role == Role.STUDENT, "Only students can call this");
         
@@ -258,12 +227,6 @@ contract Education {
         return (mySubjects, myMarks, resultsPublished);
     }
 
-
-    // --- Internal Helper Functions ---
-
-    /**
-     * @dev Internal function to remove an address from the pendingUsers array.
-     */
     function _removePendingUser(address _userAddress) internal {
         for (uint i = 0; i < pendingUsers.length; i++) {
             if (pendingUsers[i] == _userAddress) {
@@ -271,7 +234,7 @@ contract Education {
                 for (uint j = i; j < pendingUsers.length - 1; j++) {
                     pendingUsers[j] = pendingUsers[j + 1];
                 }
-                pendingUsers.pop(); // Remove the last (duplicate) element
+                pendingUsers.pop(); 
                 return;
             }
         }

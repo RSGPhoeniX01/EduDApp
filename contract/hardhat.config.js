@@ -6,11 +6,10 @@ module.exports = {
   networks: {
     // This network configuration is for a local Ganache instance
     ganache: {
-      url: "http://127.0.0.1:8545", // Default Ganache-CLI URL
+      url: "http://127.0.0.1:8545", 
       accounts: [
-        // Add the private key of your Ganache account here
-        // IMPORTANT: This should be the account you want to be the ADMIN
-        "YOUR_GANACHE_PRIVATE_KEY"
+        // Add the private key of youraccount for admin before running deployment scripts
+        "your_private_key_here"
       ]
     }
   }
