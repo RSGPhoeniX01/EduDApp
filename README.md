@@ -1,271 +1,201 @@
-EduDApp: Blockchain Education Management System
+# 🎓 EduDApp: Blockchain Education Management System
 
-EduDApp is a decentralized application (DApp) that demonstrates a tamper-proof, role-based system for managing an educational institution. The project features three distinct user roles—Admin, Teacher, and Student—all authenticated via their MetaMask wallet address.
+EduDApp is a **decentralized application (DApp)** that demonstrates a tamper-proof, role-based system for managing an educational institution. All data, including user roles, subjects, and student marks, is stored **100% on-chain** in a Solidity smart contract, ensuring complete transparency and immutability.
 
-All data, including user roles, subjects, and student marks, is stored 100% on-chain in a Solidity smart contract, ensuring complete transparency and immutability.
+---
 
-Tech Stack
+## ✨ Key Features
 
-Frontend: React, Chakra UI, Ethers.js
+* **Role-Based Access Control:** Secure authentication via **MetaMask**. The UI and available actions are unique to the Admin, Teacher, and Student roles.
+* **On-Chain Registration:** New users register and enter a **"Pending"** state. The Admin must approve them before they can access their dashboard.
+* **Immutable Mark Entry:** Teachers can add and update marks. The Admin can **"Publish"** these results, which permanently locks them from further edits.
+* **Transparent Results:** Students can only view their marks after the Admin has **published** the results.
+* **Direct Admin Control:** The Admin can bypass the registration queue and create new users (Teachers or Students) directly.
 
-Backend: Solidity
+---
 
-Development Framework: Hardhat
+## 🛠️ Tech Stack
 
-Local Blockchain: ganache-cli
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Frontend** | `React`, `Chakra UI`, `Ethers.js` | User interface, styling, and blockchain interaction. |
+| **Backend** | `Solidity` | Smart contract logic and data storage. |
+| **Development** | `Hardhat` | Smart contract compilation and deployment framework. |
+| **Local Blockchain** | `ganache-cli` | Personal Ethereum blockchain for development. |
+| **Wallet** | `MetaMask` | User authentication and transaction signing. |
 
-Wallet: MetaMask
+---
 
-Key Features
+## 🚀 System Flow
 
-Role-Based Access Control: Secure authentication via MetaMask. The UI and available actions are unique to each role.
+The primary application flow is based on a user's status within the smart contract:
 
-On-Chain Registration: New users register as a Teacher or Student and enter a "Pending" state. The Admin must approve them before they can access their dashboard.
+| User Status | Description | Resulting Page |
+| :--- | :--- | :--- |
+| **New User** | Wallet connected, but not registered. | **Register** page. |
+| **Pending User** | Has registered, but not yet approved by the Admin. | **Waiting for Approval** page. |
+| **Approved User** | Approved by the Admin. | **Role-specific Dashboard** (Admin, Teacher, or Student). |
 
-Immutable Mark Entry: Teachers can add and update marks for their students. The Admin can "Publish" these results, which permanently locks them from further edits.
+---
 
-Transparent Results: Students can only view their marks after the Admin has published the results.
+## ⚙️ How to Run This Project Locally
 
-Direct Admin Control: The Admin can bypass the registration queue and create new users (Teachers or Students) directly.
+Follow these steps exactly to get the project running on your machine.
 
-System Flow
+### Prerequisites
 
-The primary flow is based on a user's status in the smart contract:
+* **Node.js (v18+):** Download and install from [nodejs.org](https://nodejs.org/).
+* **MetaMask:** Install the browser extension from [metamask.io](https://metamask.io/).
+* **ganache-cli:** Install globally via your terminal:
+    ```bash
+    npm install -g ganache-cli
+    ```
 
-New User: Connects wallet -> Sees "Register" page.
-
-Pending User: Has registered but not been approved -> Sees "Waiting for Approval" page.
-
-Approved User: Has been approved by Admin -> Sees their role-specific Dashboard (Admin, Teacher, or Student).
-
-How to Run This Project
-
-Follow these steps exactly to get the project running locally.
-
-Prerequisites
-
-Node.js (v18+): Download here
-
-MetaMask extension in your browser: Download here
-
-ganache-cli: Install it globally by opening your terminal and running:
-
-npm install -g ganache-cli
-
-
-Part 1: Backend & Smart Contract Setup (Terminal 1)
+### Part 1: Backend & Smart Contract Setup (Terminal 1 & 2)
 
 This section sets up your local blockchain and deploys the smart contract.
 
-Open your first terminal.
+1.  **Open Terminal 1 and Start Ganache:**
+    ```bash
+    ganache-cli
+    ```
+    > 📝 **Note:** Copy the **first (0) Private Key** outputted by Ganache. This is your **Admin wallet**. Keep this terminal running.
 
-Start Ganache: Run the following command to start your local blockchain.
+2.  **Open Terminal 2 and Navigate to the Contract Folder:**
+    ```bash
+    cd path/to/your/project/contracts
+    ```
 
-ganache-cli
+3.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
+4.  **Configure Admin Wallet:**
+    * Open `contracts/hardhat.config.js`.
+    * Find the `accounts` array in the `ganache` network.
+    * Paste the Admin Private Key you copied in Step 1.
 
-Copy the Admin Private Key: Ganache will output a list of accounts. Copy the first (0) Private Key. This will be your Admin wallet. Keep this terminal running.
+    ```javascript
+    // hardhat.config.js snippet
+    // ...
+    networks: {
+      ganache: {
+        url: "[http://127.0.0.1:8545](http://127.0.0.1:8545)",
+        accounts: ["YOUR_GANACHE_PRIVATE_KEY_HERE"] // <-- PASTE HERE
+      },
+    },
+    // ...
+    ```
 
-Open a second terminal.
+5.  **Compile the Contract:**
+    ```bash
+    npx hardhat compile
+    ```
 
-Navigate to the contract folder:
+6.  **Deploy the Contract:**
+    ```bash
+    npx hardhat run scripts/deploy.js --network ganache
+    ```
+    > 📝 **Note:** The terminal will output `Education contract deployed to: 0x....`. **Copy this address.**
 
-cd path/to/your/project/contracts
-
-
-Install dependencies:
-
-npm install
-
-
-Configure Admin Wallet: Open the contracts/hardhat.config.js file in your code editor.
-
-Find the accounts array.
-
-Paste the Private Key you copied from Ganache.
-
-// hardhat.config.js
-...
-networks: {
-  ganache: {
-    url: "[http://127.0.0.1:8545](http://127.0.0.1:8545)",
-    accounts: ["YOUR_GANACHE_PRIVATE_KEY_HERE"] // <-- PASTE HERE
-  },
-},
-...
-
-
-Compile the Contract:
-
-npx hardhat compile
-
-
-Deploy the Contract:
-
-npx hardhat run scripts/deploy.js --network ganache
-
-
-The terminal will output: Education contract deployed to: 0x.... Copy this address.
-
-Part 2: Frontend & React App Setup (Terminal 3)
+### Part 2: Frontend & React App Setup (Terminal 3)
 
 This section connects your React app to the deployed contract.
 
-Open a third terminal.
+1.  **Open Terminal 3 and Navigate to the Client Folder:**
+    ```bash
+    cd path/to/your/project/client
+    ```
 
-Navigate to the client folder:
+2.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
-cd path/to/your/project/client
+3.  **Configure the Frontend:**
+    * Open the file `client/src/context/Blockchain.context.js`.
 
+    **A. Paste the Contract Address:**
+    Paste the address you copied in Part 1, Step 6.
 
-Install dependencies:
+    ```javascript
+    // client/src/context/Blockchain.context.js snippet
+    const contractAddress = "YOUR_DEPLOYED_CONTRACT_ADDRESS_HERE"; // <-- PASTE ADDRESS HERE
+    // ...
+    ```
 
-npm install
+    **B. Paste the Contract ABI:**
+    * Go to `contracts/artifacts/contracts/Education.sol/Education.json`.
+    * Open this JSON file.
+    * Find the key named `"abi":`.
+    * **Copy the entire array** that starts with `[` and ends with `]`.
+    * Paste this entire array into the `contractABI` variable in `Blockchain.context.js`.
 
+    ```javascript
+    // client/src/context/Blockchain.context.js snippet
+    // ...
+    const contractABI = [ // <-- PASTE THE ENTIRE ABI ARRAY HERE
+      // ... full array contents ...
+    ];
+    ```
 
-Configure the Frontend: Open the client/src/context/Blockchain.context.js file. You need to paste the Address and ABI here.
+4.  **Start the React App:**
+    ```bash
+    npm start
+    ```
+    The application will open in your browser at `http://localhost:3000`.
 
-A. Paste the Contract Address:
-Paste the address you copied from Step 9 (Part 1).
+---
 
-// client/src/context/Blockchain.context.js
-const contractAddress = "YOUR_DEPLOYED_CONTRACT_ADDRESS_HERE"; // <-- PASTE ADDRESS HERE
+## 👨‍🏫 How to Use the Application: Testing the Workflow
 
+### Step 1: Set Up MetaMask
 
-B. Paste the Contract ABI (The "Step 3" You Asked About):
+1.  Open your MetaMask extension.
+2.  Select the **Localhost 8545** network.
+3.  Click your account icon > **"Import account"**.
+4.  Paste the **Admin's Private Key** (copied in Part 1, Step 1). This is your Admin Wallet (Account 1).
 
-Go back to your contracts folder.
+### Step 2: The Admin Flow
 
-Navigate to artifacts/contracts/Education.sol/Education.json.
+1.  Go to `http://localhost:3000`.
+2.  Click **"Connect Wallet"**. The app recognizes you as the Admin.
+3.  You are redirected to the **Admin Dashboard**.
 
-Open this Education.json file.
+### Step 3: The Student/Teacher Registration Flow
 
-Find the key named "abi":.
+1.  In MetaMask, switch to **Account 2** (or any other Ganache account).
+2.  The website refreshes to the **Registration Page**.
+3.  Fill out the form (e.g., Name: Test Teacher, Role: Teacher, Subject: Computer Science).
+4.  Click **"Register"** and confirm the MetaMask transaction.
+5.  You are redirected to the **"Waiting for Approval"** page.
 
-Copy the entire array that starts with [ and ends with ].
+### Step 4: The Approval Flow (Admin)
 
-Paste this entire array into the contractABI variable in Blockchain.context.js.
+1.  In MetaMask, **switch back to the Admin account (Account 1)**.
+2.  The page refreshes to the Admin Dashboard.
+3.  Go to the **"Approve Users"** tab.
+4.  Click the **"Approve"** button next to "Test Teacher" and confirm the transaction.
 
-// client/src/context/Blockchain.context.js
+### Step 5: The Teacher Flow (Post-Approval)
 
-// ...your address from above...
+1.  In MetaMask, **switch back to the Teacher's account (Account 2)**.
+2.  The page refreshes to the **Teacher Dashboard**.
+3.  **(Optional):** Repeat Steps 3 & 4 to register and approve a Student.
+4.  As the Teacher, navigate to your dashboard to **add marks** for approved students.
 
-const contractABI = [ // <-- PASTE THE ENTIRE ABI ARRAY HERE
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  // ... MANY MORE LINES ...
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "users",
-    "outputs": [ /* ... */ ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-];
+### Step 6: The Results Flow (Admin & Student)
 
+1.  **As the Teacher**, add marks for an approved student (e.g., 85).
+2.  **As the Student**, log in. You will see subjects but **no marks** (since they are not published).
+3.  **As the Admin**, go to the **"Operations"** tab.
+4.  Click the **"Publish Results"** button and confirm the transaction.
+5.  **As the Teacher**, log in. The marks are now **locked and disabled** from editing.
+6.  **As the Student**, log in again. You can now **view your mark: 85**.
 
-Start the React App:
+---
 
-npm start
+## 📄 License
 
-
-Your app is now running! It will open in your browser at http://localhost:3000.
-
-How to Use the Application
-
-Now that the app is running, here is how to test the full workflow.
-
-Step 1: Set Up MetaMask
-
-Open your MetaMask extension.
-
-Click the network dropdown at the top and select Localhost 8545. (If you don't see it, go to "Add Network" and add it manually).
-
-Click your account icon > "Import account".
-
-Paste the Admin's Private Key (the one you copied from Ganache in Part 1).
-
-Step 2: The Admin Flow
-
-Go to http://localhost:3000.
-
-Click the "Connect Wallet" button in the navigation bar.
-
-The app will recognize you as the Admin (since you imported the Admin wallet).
-
-You will be automatically redirected to the Admin Dashboard.
-
-Explore the tabs: "Create User", "View Teachers", etc. They will be empty for now.
-
-Step 3: The Student/Teacher Registration Flow
-
-In MetaMask, click the account icon and select Account 2 (any other account from Ganache).
-
-The website will refresh. Since this new account is not registered, you will see the Registration Page.
-
-Fill out the form:
-
-Name: Test Teacher
-
-Role: Teacher
-
-Subject: Computer Science
-
-Click "Register". Your transaction will be sent to MetaMask. Confirm it.
-
-After the transaction, you will be redirected to the "Waiting for Approval" page.
-
-Step 4: The Approval Flow (Admin)
-
-In MetaMask, switch back to your Admin account (Account 1).
-
-The page will refresh to your Admin Dashboard.
-
-Go to the "Approve Users" tab.
-
-You will now see "Test Teacher" in the list.
-
-Click the "Approve" button and confirm the MetaMask transaction.
-
-The user will disappear from the pending list.
-
-Step 5: The Teacher Flow (Post-Approval)
-
-In MetaMask, switch back to the Teacher's account (Account 2).
-
-The page will refresh, and you will now see the Teacher Dashboard.
-
-You can see a list of students (it will be empty).
-
-(Repeat Steps 3 & 4 to register and approve a Student.)
-
-As the Admin, go to "Create User" or "View Teachers" to manage users.
-
-As the Teacher, you can now go to your dashboard and add marks for your approved students.
-
-Step 6: The Results Flow (Admin & Student)
-
-As the Teacher, add marks for a student (e.g., 85).
-
-As the Student, log in. You will see your subjects but no marks.
-
-As the Admin, go to the "Operations" tab.
-
-Click the "Publish Results" button and confirm the transaction.
-
-As the Teacher, log in. You will see the marks are now locked and disabled.
-
-As the Student, log in again. You will now be able to see your mark: 85.
-
-License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the **MIT License**.
