@@ -1,10 +1,10 @@
-# 🎓 EduDApp: Blockchain Education Management System
+# EduDApp: Blockchain Education Management System
 
 EduDApp is a **decentralized application (DApp)** that demonstrates a tamper-proof, role-based system for managing an educational institution. All data, including user roles, subjects, and student marks, is stored **100% on-chain** in a Solidity smart contract, ensuring complete transparency and immutability.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 * **Role-Based Access Control:** Secure authentication via **MetaMask**. The UI and available actions are unique to the Admin, Teacher, and Student roles.
 * **On-Chain Registration:** New users register and enter a **"Pending"** state. The Admin must approve them before they can access their dashboard.
@@ -14,7 +14,7 @@ EduDApp is a **decentralized application (DApp)** that demonstrates a tamper-pro
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
@@ -26,7 +26,7 @@ EduDApp is a **decentralized application (DApp)** that demonstrates a tamper-pro
 
 ---
 
-## 🚀 System Flow
+## System Flow
 
 The primary application flow is based on a user's status within the smart contract:
 
@@ -38,7 +38,7 @@ The primary application flow is based on a user's status within the smart contra
 
 ---
 
-## ⚙️ How to Run This Project Locally
+## How to Run This Project Locally
 
 Follow these steps exactly to get the project running on your machine.
 
@@ -97,7 +97,7 @@ This section sets up your local blockchain and deploys the smart contract.
     ```bash
     npx hardhat run scripts/deploy.js --network ganache
     ```
-    > 📝 **Note:** The terminal will output `Education contract deployed to: 0x....`. **Copy this address.**
+    > **Note:** The terminal will output `Education contract deployed to: 0x....`. **Copy this address.**
 
 ### Part 2: Frontend & React App Setup (Terminal 3)
 
@@ -148,7 +148,7 @@ This section connects your React app to the deployed contract.
 
 ---
 
-## 👨‍🏫 How to Use the Application: Testing the Workflow
+## How to Use the Application: Testing the Workflow
 
 ### Step 1: Set Up MetaMask
 
@@ -196,6 +196,6 @@ This section connects your React app to the deployed contract.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License**.
