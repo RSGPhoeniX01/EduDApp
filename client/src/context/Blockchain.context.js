@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, useContext, useCallback } fr
 import { ethers } from 'ethers';
 
 // 1. Paste your contract's deployed address
-const contractAddress = "0x3fDA7d86F12B9C0633140Db13a7771f8BFd3e914"; 
+const contractAddress = "0x5C43B72AF48f6c27932FA9545E73E18bDB647196"; 
 
 // 2. Paste your contract's ABI
 const contractABI = [{

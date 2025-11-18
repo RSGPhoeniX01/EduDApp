@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import jsPDF from "jspdf";
+
 import {
   Box,
   Heading,
@@ -8,6 +10,7 @@ import {
   Tr,
   Th,
   Td,
+  Button,
   Spinner,
   Center,
   Text,
@@ -25,6 +28,30 @@ const StudentDashboard = () => {
   const [cpi, setCpi] = useState(null);
   const [backs, setBacks] = useState([]);
 
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Student Result Report", 20, 20);
+    doc.setFontSize(12);
+    doc.text(`Name: ${userName}`, 20, 30);
+    doc.text(`CPI: ${cpi}`, 20, 40);
+    if (backs.length > 0) {
+      doc.text(`Backlogs: ${backs.join(", ")}`, 20, 50);
+    } else {
+      doc.text("Backlogs: None", 20, 50);
+    }
+    doc.text("-------------------------------------------------", 20, 60);
+    doc.text("Subject-wise Marks & Grades", 20, 70);
+
+    let yPos = 80;
+    myMarks.forEach((item) => {
+      doc.text(`${item.subject}:  ${item.mark}  (${item.grade})`, 20, yPos);
+      yPos += 10;
+    });
+
+    doc.save(`${userName}_grade_report.pdf`);
+  };
+
   const getGrade = (mark) => {
     if (mark >= 85) return "A+";
     if (mark >= 75) return "A";
@@ -38,7 +65,7 @@ const StudentDashboard = () => {
   const cpiCalculator = (data) => {
     const len = data.length;
     let totMarksObtained = 0;
-    let totMarks = len * 100; 
+    let totMarks = len * 100;
     for (let i = 0; i < len; i++) {
       totMarksObtained += Number(data[i].mark);
     }
@@ -46,7 +73,6 @@ const StudentDashboard = () => {
     console.log("cpi:", calculatedCpi);
     return parseFloat(calculatedCpi.toFixed(2));
   };
-  
 
   useEffect(() => {
     const fetchMyMarks = async () => {
@@ -97,16 +123,13 @@ const StudentDashboard = () => {
     <Box p={5} boxShadow="xl" borderRadius="lg">
       <VStack align="stretch" spacing={6}>
         <Heading>Welcome, {userName}!</Heading>
-
         {!isPublished && (
           <Alert status="info" borderRadius="md">
             <AlertIcon />
             Results are not yet published.
           </Alert>
         )}
-
         <Heading size="lg">Your Enrolled Subjects</Heading>
-
         {myMarks.length === 0 ? (
           <Text>You are not enrolled in any subjects.</Text>
         ) : (
@@ -141,7 +164,6 @@ const StudentDashboard = () => {
             </Tbody>
           </Table>
         )}
-
         {isPublished && (
           <>
             <Heading size="md">Result Summary</Heading>
@@ -168,11 +190,15 @@ const StudentDashboard = () => {
             ) : (
               <Alert status="error" borderRadius="md">
                 <AlertIcon />
-                ⚠️ Needs Improvement. Please work harder next time.
+                Needs Improvement. Please work harder next time.
               </Alert>
             )}
           </>
         )}
+        <Button colorScheme="blue" onClick={downloadPDF}>
+          Download Result PDF
+        </Button>
+        ;
       </VStack>
     </Box>
   );
